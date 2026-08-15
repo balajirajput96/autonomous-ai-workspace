@@ -12,6 +12,6 @@
 - [x] Build timestamped activity log with clear task and automation status indicators.
 - [x] Add unit tests for privacy guardrails, core procedures, and workflow scheduling behavior.
 - [x] Verify layout visually on desktop and mobile, run tests and type checks, then prepare GitHub handoff.
-- [ ] Add isolated automated coverage for AI procedure input validation and workflow lifecycle behavior.
+- [x] Add isolated automated coverage for AI procedure input validation and workflow lifecycle behavior.
 - [ ] Publish the application, enable a workflow in the deployed workspace, and verify a Heartbeat run plus owner notification.
-- [ ] Create a private GitHub repository handoff with the completed workspace source and deployment notes.
+- [x] Create a private GitHub repository handoff with the completed workspace source and deployment notes.
