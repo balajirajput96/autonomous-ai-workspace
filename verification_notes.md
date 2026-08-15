@@ -12,3 +12,5 @@
 - The browser session remained authenticated on the development preview after publishing, while the visible banner confirms that schedule activation targets the published URL rather than the preview.
 - The published domain is live at `autonomai-zqssrlvr.manus.space` and correctly requires a separate Manus OAuth session before private workflow controls are shown.
 - The non-owner logout defect was corrected: selecting Sign out now invokes the OAuth logout mutation and redirects the browser away from the restricted session.
+- Production verification is currently blocked by a non-owner Manus OAuth session: the workflow controls are denied before any data or scheduler action is exposed.
+- The non-owner production session was signed out successfully; the published workspace now displays the unauthenticated Manus OAuth sign-in screen.
