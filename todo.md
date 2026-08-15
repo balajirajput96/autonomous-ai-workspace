@@ -23,3 +23,4 @@
 - [ ] Deferred by user: complete live workflow run and owner-notification verification after the canonical owner OAuth account is available.
 - [x] Replace the all-language code highlighter with a registered five-language implementation and verify a successful production build.
 - [x] Update production dependency resolutions for reported critical, high, and moderate security advisories, then re-run audit, tests, and build.
+- [ ] Move security overrides into the workspace-level pnpm configuration so the production installer preserves Express-compatible resolutions.
