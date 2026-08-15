@@ -37,7 +37,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     return <AuthScreen />;
   }
 
-  if (user.role !== "admin") {
+  if (!user.isOwner) {
     return <div className="flex min-h-screen items-center justify-center bg-[#080914] px-6">
       <div className="max-w-md text-center">
         <LockKeyhole className="mx-auto size-8 text-rose-300" />

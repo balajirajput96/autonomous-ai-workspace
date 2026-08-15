@@ -16,3 +16,7 @@
 - [ ] Publish the application, enable a workflow in the deployed workspace, and verify a Heartbeat run plus owner notification.
 - [x] Create a private GitHub repository handoff with the completed workspace source and deployment notes.
 - [ ] Publish and verify the non-owner access-screen Sign out fix against the production domain.
+- [x] Expose a canonical owner flag from the server and use it in the UI so access is based on OWNER_OPEN_ID rather than a mutable role field.
+- [x] Add tests covering owner and non-owner auth identity responses.
+
+- [ ] Re-publish the owner mapping fix and verify production owner access plus workflow controls.
