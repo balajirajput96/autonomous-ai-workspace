@@ -15,3 +15,4 @@
 - [x] Add isolated automated coverage for AI procedure input validation and workflow lifecycle behavior.
 - [ ] Publish the application, enable a workflow in the deployed workspace, and verify a Heartbeat run plus owner notification.
 - [x] Create a private GitHub repository handoff with the completed workspace source and deployment notes.
+- [ ] Publish and verify the non-owner access-screen Sign out fix against the production domain.
