@@ -35,3 +35,9 @@ pnpm build
 ## Publish and activation
 
 Create a checkpoint from Manus, then use the **Publish** button in the management interface. After the published URL is available, open **Workflows**, create a workflow, and enable it. The UI is intentionally designed to avoid scheduling against a preview URL.
+
+## Owner access troubleshooting
+
+Workspace access is intentionally tied to the platform-provided `OWNER_OPEN_ID`, not a mutable database role or an email address. If a signed-in account sees **Access restricted**, sign out and use the exact Manus OAuth account that originally created the workspace. The application does not store an owner email address and should not be changed to grant owner access based on an unverified email label.
+
+The live verification of workflow execution and owner notifications is performed only after the canonical owner can enter the production dashboard. Until then, the relevant procedure, callback, notification call, and automated lifecycle coverage remain available in source and tests, but no production schedule is enabled.
