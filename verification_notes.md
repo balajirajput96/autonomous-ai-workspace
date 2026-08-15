@@ -14,5 +14,6 @@
 - The non-owner logout defect was corrected: selecting Sign out now invokes the OAuth logout mutation and redirects the browser away from the restricted session.
 - Production verification is currently blocked by a non-owner Manus OAuth session: the workflow controls are denied before any data or scheduler action is exposed.
 - The non-owner production session was signed out successfully; the published workspace now displays the unauthenticated Manus OAuth sign-in screen.
+- After the production resolver compatibility checkpoint, the published domain completed a successful page load and returned the expected non-owner access-restricted screen rather than a container startup failure.
 
 - The deployment has a configured OWNER_OPEN_ID whose prefix matches the first registered OAuth identity; that database row has no stored email and a legacy `user` role. The owner mapping fix deliberately uses the canonical openId, so the correct OAuth account—not the email label—must be used for production access.
