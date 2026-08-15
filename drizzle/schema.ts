@@ -1,17 +1,7 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
+import { boolean, index, int, mysqlEnum, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
 
-/**
- * Core user table backing auth flow.
- * Extend this file with additional tables as your product grows.
- * Columns use camelCase to match both database fields and generated types.
- */
 export const users = mysqlTable("users", {
-  /**
-   * Surrogate primary key. Auto-incremented numeric value managed by the database.
-   * Use this for relations between tables.
-   */
   id: int("id").autoincrement().primaryKey(),
-  /** Manus OAuth identifier (openId) returned from the OAuth callback. Unique per user. */
   openId: varchar("openId", { length: 64 }).notNull().unique(),
   name: text("name"),
   email: varchar("email", { length: 320 }),
@@ -22,7 +12,64 @@ export const users = mysqlTable("users", {
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
 });
 
-export type User = typeof users.$inferSelect;
-export type InsertUser = typeof users.$inferInsert;
+export const conversations = mysqlTable("conversations", {
+  id: int("id").autoincrement().primaryKey(),
+  ownerOpenId: varchar("ownerOpenId", { length: 64 }).notNull(),
+  title: varchar("title", { length: 160 }).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, table => [index("conversations_owner_updated_idx").on(table.ownerOpenId, table.updatedAt)]);
 
-// TODO: Add your tables here
+export const chatMessages = mysqlTable("chatMessages", {
+  id: int("id").autoincrement().primaryKey(),
+  conversationId: int("conversationId").notNull(),
+  role: mysqlEnum("role", ["user", "assistant"]).notNull(),
+  content: text("content").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, table => [index("chat_messages_conversation_idx").on(table.conversationId, table.createdAt)]);
+
+export const imageGenerations = mysqlTable("imageGenerations", {
+  id: int("id").autoincrement().primaryKey(),
+  ownerOpenId: varchar("ownerOpenId", { length: 64 }).notNull(),
+  prompt: text("prompt").notNull(),
+  imageKey: varchar("imageKey", { length: 512 }).notNull(),
+  imageUrl: text("imageUrl").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, table => [index("image_generations_owner_created_idx").on(table.ownerOpenId, table.createdAt)]);
+
+export const automationWorkflows = mysqlTable("automationWorkflows", {
+  id: int("id").autoincrement().primaryKey(),
+  ownerOpenId: varchar("ownerOpenId", { length: 64 }).notNull(),
+  name: varchar("name", { length: 120 }).notNull(),
+  trigger: varchar("trigger", { length: 80 }).notNull(),
+  action: text("action").notNull(),
+  cronExpression: varchar("cronExpression", { length: 64 }).notNull(),
+  enabled: boolean("enabled").default(false).notNull(),
+  scheduleCronTaskUid: varchar("scheduleCronTaskUid", { length: 65 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, table => [
+  index("workflows_owner_updated_idx").on(table.ownerOpenId, table.updatedAt),
+  index("workflows_cron_task_idx").on(table.scheduleCronTaskUid),
+]);
+
+export const workflowRuns = mysqlTable("workflowRuns", {
+  id: int("id").autoincrement().primaryKey(),
+  workflowId: int("workflowId").notNull(),
+  status: mysqlEnum("status", ["running", "succeeded", "failed"]).notNull(),
+  output: text("output"),
+  error: text("error"),
+  startedAt: timestamp("startedAt").defaultNow().notNull(),
+  completedAt: timestamp("completedAt"),
+}, table => [index("workflow_runs_workflow_started_idx").on(table.workflowId, table.startedAt)]);
+
+export const activityEvents = mysqlTable("activityEvents", {
+  id: int("id").autoincrement().primaryKey(),
+  ownerOpenId: varchar("ownerOpenId", { length: 64 }).notNull(),
+  type: varchar("type", { length: 80 }).notNull(),
+  detail: text("detail").notNull(),
+  status: mysqlEnum("status", ["started", "succeeded", "failed", "info"]).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, table => [index("activity_events_owner_created_idx").on(table.ownerOpenId, table.createdAt)]);
+
+export type User = typeof users.$inferSelect;
