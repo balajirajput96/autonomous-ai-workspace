@@ -32,6 +32,8 @@ pnpm test
 pnpm build
 ```
 
+The dependency graph is checked with `pnpm audit --prod`. The project uses package-manager resolution overrides for remediated transitive advisories; after dependency changes, run `pnpm install`, `pnpm audit --prod`, `pnpm check`, `pnpm test`, and `pnpm build` before publishing.
+
 ## Publish and activation
 
 Create a checkpoint from Manus, then use the **Publish** button in the management interface. After the published URL is available, open **Workflows**, create a workflow, and enable it. The UI is intentionally designed to avoid scheduling against a preview URL.
