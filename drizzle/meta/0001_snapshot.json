@@ -54,10 +54,7 @@
       "indexes": {
         "activity_events_owner_created_idx": {
           "name": "activity_events_owner_created_idx",
-          "columns": [
-            "ownerOpenId",
-            "createdAt"
-          ],
+          "columns": ["ownerOpenId", "createdAt"],
           "isUnique": false
         }
       },
@@ -65,9 +62,7 @@
       "compositePrimaryKeys": {
         "activityEvents_id": {
           "name": "activityEvents_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -154,17 +149,12 @@
       "indexes": {
         "workflows_owner_updated_idx": {
           "name": "workflows_owner_updated_idx",
-          "columns": [
-            "ownerOpenId",
-            "updatedAt"
-          ],
+          "columns": ["ownerOpenId", "updatedAt"],
           "isUnique": false
         },
         "workflows_cron_task_idx": {
           "name": "workflows_cron_task_idx",
-          "columns": [
-            "scheduleCronTaskUid"
-          ],
+          "columns": ["scheduleCronTaskUid"],
           "isUnique": false
         }
       },
@@ -172,9 +162,7 @@
       "compositePrimaryKeys": {
         "automationWorkflows_id": {
           "name": "automationWorkflows_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -223,10 +211,7 @@
       "indexes": {
         "chat_messages_conversation_idx": {
           "name": "chat_messages_conversation_idx",
-          "columns": [
-            "conversationId",
-            "createdAt"
-          ],
+          "columns": ["conversationId", "createdAt"],
           "isUnique": false
         }
       },
@@ -234,9 +219,7 @@
       "compositePrimaryKeys": {
         "chatMessages_id": {
           "name": "chatMessages_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -287,10 +270,7 @@
       "indexes": {
         "conversations_owner_updated_idx": {
           "name": "conversations_owner_updated_idx",
-          "columns": [
-            "ownerOpenId",
-            "updatedAt"
-          ],
+          "columns": ["ownerOpenId", "updatedAt"],
           "isUnique": false
         }
       },
@@ -298,9 +278,7 @@
       "compositePrimaryKeys": {
         "conversations_id": {
           "name": "conversations_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -356,10 +334,7 @@
       "indexes": {
         "image_generations_owner_created_idx": {
           "name": "image_generations_owner_created_idx",
-          "columns": [
-            "ownerOpenId",
-            "createdAt"
-          ],
+          "columns": ["ownerOpenId", "createdAt"],
           "isUnique": false
         }
       },
@@ -367,9 +342,7 @@
       "compositePrimaryKeys": {
         "imageGenerations_id": {
           "name": "imageGenerations_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -452,17 +425,13 @@
       "compositePrimaryKeys": {
         "users_id": {
           "name": "users_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {
         "users_openId_unique": {
           "name": "users_openId_unique",
-          "columns": [
-            "openId"
-          ]
+          "columns": ["openId"]
         }
       },
       "checkConstraint": {}
@@ -524,10 +493,7 @@
       "indexes": {
         "workflow_runs_workflow_started_idx": {
           "name": "workflow_runs_workflow_started_idx",
-          "columns": [
-            "workflowId",
-            "startedAt"
-          ],
+          "columns": ["workflowId", "startedAt"],
           "isUnique": false
         }
       },
@@ -535,9 +501,7 @@
       "compositePrimaryKeys": {
         "workflowRuns_id": {
           "name": "workflowRuns_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},

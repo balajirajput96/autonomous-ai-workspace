@@ -29,12 +29,16 @@ function context(openId: string): TrpcContext {
 
 describe("auth.me owner identity", () => {
   it("marks the configured OWNER_OPEN_ID as the owner", async () => {
-    const result = await appRouter.createCaller(context(testOwnerOpenId)).auth.me();
+    const result = await appRouter
+      .createCaller(context(testOwnerOpenId))
+      .auth.me();
     expect(result?.isOwner).toBe(true);
   });
 
   it("does not mark another OAuth identity as the owner", async () => {
-    const result = await appRouter.createCaller(context("different-open-id")).auth.me();
+    const result = await appRouter
+      .createCaller(context("different-open-id"))
+      .auth.me();
     expect(result?.isOwner).toBe(false);
   });
 });

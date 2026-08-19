@@ -10,7 +10,11 @@ import { workspaceRouter } from "./routers/workspace";
 export const appRouter = router({
   system: systemRouter,
   auth: router({
-    me: publicProcedure.query(({ ctx }) => ctx.user ? { ...ctx.user, isOwner: ctx.user.openId === ENV.ownerOpenId } : null),
+    me: publicProcedure.query(({ ctx }) =>
+      ctx.user
+        ? { ...ctx.user, isOwner: ctx.user.openId === ENV.ownerOpenId }
+        : null
+    ),
     logout: publicProcedure.mutation(({ ctx }) => {
       const cookieOptions = getSessionCookieOptions(ctx.req);
       ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });

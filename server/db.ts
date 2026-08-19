@@ -32,36 +32,48 @@ function insertId(result: unknown) {
   return Number((first as { insertId?: number }).insertId);
 }
 
-export async function upsertUser(user: Partial<User> & Pick<User, "openId">): Promise<void> {
+export async function upsertUser(
+  user: Partial<User> & Pick<User, "openId">
+): Promise<void> {
   const db = await requireDb();
   const values = {
     openId: user.openId,
     name: user.name ?? null,
     email: user.email ?? null,
     loginMethod: user.loginMethod ?? null,
-    role: user.openId === ENV.ownerOpenId ? "admin" as const : (user.role ?? "user"),
+    role:
+      user.openId === ENV.ownerOpenId
+        ? ("admin" as const)
+        : (user.role ?? "user"),
     lastSignedIn: user.lastSignedIn ?? new Date(),
   };
-  await db.insert(users).values(values).onDuplicateKeyUpdate({
-    set: {
-      name: values.name,
-      email: values.email,
-      loginMethod: values.loginMethod,
-      role: values.role,
-      lastSignedIn: values.lastSignedIn,
-    },
-  });
+  await db
+    .insert(users)
+    .values(values)
+    .onDuplicateKeyUpdate({
+      set: {
+        name: values.name,
+        email: values.email,
+        loginMethod: values.loginMethod,
+        role: values.role,
+        lastSignedIn: values.lastSignedIn,
+      },
+    });
 }
 
 export async function getUserByOpenId(openId: string) {
   const db = await getDb();
   if (!db) return undefined;
-  return (await db.select().from(users).where(eq(users.openId, openId)).limit(1))[0];
+  return (
+    await db.select().from(users).where(eq(users.openId, openId)).limit(1)
+  )[0];
 }
 
 export async function listConversations(ownerOpenId: string) {
   const db = await requireDb();
-  return db.select().from(conversations)
+  return db
+    .select()
+    .from(conversations)
     .where(eq(conversations.ownerOpenId, ownerOpenId))
     .orderBy(desc(conversations.updatedAt));
 }
@@ -70,116 +82,228 @@ export async function createConversation(ownerOpenId: string, title: string) {
   const db = await requireDb();
   const result = await db.insert(conversations).values({ ownerOpenId, title });
   const id = insertId(result);
-  return (await db.select().from(conversations).where(eq(conversations.id, id)).limit(1))[0]!;
+  return (
+    await db
+      .select()
+      .from(conversations)
+      .where(eq(conversations.id, id))
+      .limit(1)
+  )[0]!;
 }
 
-export async function getConversation(ownerOpenId: string, conversationId: number) {
+export async function getConversation(
+  ownerOpenId: string,
+  conversationId: number
+) {
   const db = await requireDb();
-  return (await db.select().from(conversations)
-    .where(and(eq(conversations.id, conversationId), eq(conversations.ownerOpenId, ownerOpenId))).limit(1))[0];
+  return (
+    await db
+      .select()
+      .from(conversations)
+      .where(
+        and(
+          eq(conversations.id, conversationId),
+          eq(conversations.ownerOpenId, ownerOpenId)
+        )
+      )
+      .limit(1)
+  )[0];
 }
 
-export async function getConversationMessages(ownerOpenId: string, conversationId: number) {
+export async function getConversationMessages(
+  ownerOpenId: string,
+  conversationId: number
+) {
   const conversation = await getConversation(ownerOpenId, conversationId);
   if (!conversation) return [];
   const db = await requireDb();
-  return db.select().from(chatMessages)
+  return db
+    .select()
+    .from(chatMessages)
     .where(eq(chatMessages.conversationId, conversationId))
     .orderBy(chatMessages.createdAt);
 }
 
-export async function addChatMessage(conversationId: number, role: "user" | "assistant", content: string) {
+export async function addChatMessage(
+  conversationId: number,
+  role: "user" | "assistant",
+  content: string
+) {
   const db = await requireDb();
-  const result = await db.insert(chatMessages).values({ conversationId, role, content });
-  await db.update(conversations).set({ updatedAt: new Date() }).where(eq(conversations.id, conversationId));
+  const result = await db
+    .insert(chatMessages)
+    .values({ conversationId, role, content });
+  await db
+    .update(conversations)
+    .set({ updatedAt: new Date() })
+    .where(eq(conversations.id, conversationId));
   const id = insertId(result);
-  return (await db.select().from(chatMessages).where(eq(chatMessages.id, id)).limit(1))[0]!;
+  return (
+    await db.select().from(chatMessages).where(eq(chatMessages.id, id)).limit(1)
+  )[0]!;
 }
 
 export async function listImages(ownerOpenId: string) {
   const db = await requireDb();
-  return db.select().from(imageGenerations)
+  return db
+    .select()
+    .from(imageGenerations)
     .where(eq(imageGenerations.ownerOpenId, ownerOpenId))
     .orderBy(desc(imageGenerations.createdAt));
 }
 
-export async function addImageGeneration(data: { ownerOpenId: string; prompt: string; imageKey: string; imageUrl: string }) {
+export async function addImageGeneration(data: {
+  ownerOpenId: string;
+  prompt: string;
+  imageKey: string;
+  imageUrl: string;
+}) {
   const db = await requireDb();
   const result = await db.insert(imageGenerations).values(data);
   const id = insertId(result);
-  return (await db.select().from(imageGenerations).where(eq(imageGenerations.id, id)).limit(1))[0]!;
+  return (
+    await db
+      .select()
+      .from(imageGenerations)
+      .where(eq(imageGenerations.id, id))
+      .limit(1)
+  )[0]!;
 }
 
 export async function listWorkflows(ownerOpenId: string) {
   const db = await requireDb();
-  return db.select().from(automationWorkflows)
+  return db
+    .select()
+    .from(automationWorkflows)
     .where(eq(automationWorkflows.ownerOpenId, ownerOpenId))
     .orderBy(desc(automationWorkflows.updatedAt));
 }
 
-export async function createWorkflow(data: { ownerOpenId: string; name: string; trigger: string; action: string; cronExpression: string }) {
+export async function createWorkflow(data: {
+  ownerOpenId: string;
+  name: string;
+  trigger: string;
+  action: string;
+  cronExpression: string;
+}) {
   const db = await requireDb();
-  const result = await db.insert(automationWorkflows).values({ ...data, enabled: false });
+  const result = await db
+    .insert(automationWorkflows)
+    .values({ ...data, enabled: false });
   const id = insertId(result);
-  return (await db.select().from(automationWorkflows).where(eq(automationWorkflows.id, id)).limit(1))[0]!;
+  return (
+    await db
+      .select()
+      .from(automationWorkflows)
+      .where(eq(automationWorkflows.id, id))
+      .limit(1)
+  )[0]!;
 }
 
 export async function getWorkflow(ownerOpenId: string, workflowId: number) {
   const db = await requireDb();
-  return (await db.select().from(automationWorkflows)
-    .where(and(eq(automationWorkflows.id, workflowId), eq(automationWorkflows.ownerOpenId, ownerOpenId))).limit(1))[0];
+  return (
+    await db
+      .select()
+      .from(automationWorkflows)
+      .where(
+        and(
+          eq(automationWorkflows.id, workflowId),
+          eq(automationWorkflows.ownerOpenId, ownerOpenId)
+        )
+      )
+      .limit(1)
+  )[0];
 }
 
 export async function getWorkflowById(workflowId: number) {
   const db = await requireDb();
-  return (await db.select().from(automationWorkflows)
-    .where(eq(automationWorkflows.id, workflowId)).limit(1))[0];
+  return (
+    await db
+      .select()
+      .from(automationWorkflows)
+      .where(eq(automationWorkflows.id, workflowId))
+      .limit(1)
+  )[0];
 }
 
 export async function getWorkflowByTaskUid(taskUid: string) {
   const db = await requireDb();
-  return (await db.select().from(automationWorkflows)
-    .where(eq(automationWorkflows.scheduleCronTaskUid, taskUid)).limit(1))[0];
+  return (
+    await db
+      .select()
+      .from(automationWorkflows)
+      .where(eq(automationWorkflows.scheduleCronTaskUid, taskUid))
+      .limit(1)
+  )[0];
 }
 
-export async function updateWorkflow(workflowId: number, values: Partial<typeof automationWorkflows.$inferInsert>) {
+export async function updateWorkflow(
+  workflowId: number,
+  values: Partial<typeof automationWorkflows.$inferInsert>
+) {
   const db = await requireDb();
-  await db.update(automationWorkflows).set({ ...values, updatedAt: new Date() }).where(eq(automationWorkflows.id, workflowId));
+  await db
+    .update(automationWorkflows)
+    .set({ ...values, updatedAt: new Date() })
+    .where(eq(automationWorkflows.id, workflowId));
 }
 
 export async function deleteWorkflow(workflowId: number) {
   const db = await requireDb();
-  await db.delete(automationWorkflows).where(eq(automationWorkflows.id, workflowId));
+  await db
+    .delete(automationWorkflows)
+    .where(eq(automationWorkflows.id, workflowId));
 }
 
 export async function createWorkflowRun(workflowId: number) {
   const db = await requireDb();
-  const result = await db.insert(workflowRuns).values({ workflowId, status: "running" });
+  const result = await db
+    .insert(workflowRuns)
+    .values({ workflowId, status: "running" });
   return insertId(result);
 }
 
-export async function finishWorkflowRun(runId: number, status: "succeeded" | "failed", data: { output?: string; error?: string }) {
+export async function finishWorkflowRun(
+  runId: number,
+  status: "succeeded" | "failed",
+  data: { output?: string; error?: string }
+) {
   const db = await requireDb();
-  await db.update(workflowRuns).set({ status, ...data, completedAt: new Date() }).where(eq(workflowRuns.id, runId));
+  await db
+    .update(workflowRuns)
+    .set({ status, ...data, completedAt: new Date() })
+    .where(eq(workflowRuns.id, runId));
 }
 
-export async function addActivity(ownerOpenId: string, type: string, detail: string, status: "started" | "succeeded" | "failed" | "info") {
+export async function addActivity(
+  ownerOpenId: string,
+  type: string,
+  detail: string,
+  status: "started" | "succeeded" | "failed" | "info"
+) {
   const db = await requireDb();
   await db.insert(activityEvents).values({ ownerOpenId, type, detail, status });
 }
 
 export async function listActivities(ownerOpenId: string) {
   const db = await requireDb();
-  return db.select().from(activityEvents)
+  return db
+    .select()
+    .from(activityEvents)
     .where(eq(activityEvents.ownerOpenId, ownerOpenId))
     .orderBy(desc(activityEvents.createdAt))
     .limit(100);
 }
 
 export async function getDashboardSummary(ownerOpenId: string) {
-  const [conversationRows, imageRows, workflowRows, activities] = await Promise.all([
-    listConversations(ownerOpenId), listImages(ownerOpenId), listWorkflows(ownerOpenId), listActivities(ownerOpenId),
-  ]);
+  const [conversationRows, imageRows, workflowRows, activities] =
+    await Promise.all([
+      listConversations(ownerOpenId),
+      listImages(ownerOpenId),
+      listWorkflows(ownerOpenId),
+      listActivities(ownerOpenId),
+    ]);
   return {
     conversations: conversationRows.length,
     images: imageRows.length,

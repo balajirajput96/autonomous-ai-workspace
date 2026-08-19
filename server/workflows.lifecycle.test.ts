@@ -37,7 +37,9 @@ function ownerContext(): TrpcContext {
       updatedAt: now,
       lastSignedIn: now,
     },
-    req: { headers: { cookie: "app_session_id=test-session" } } as TrpcContext["req"],
+    req: {
+      headers: { cookie: "app_session_id=test-session" },
+    } as TrpcContext["req"],
     res: {} as TrpcContext["res"],
   };
 }
@@ -79,31 +81,51 @@ describe("workflow lifecycle", () => {
       action: workflow.action,
       cronExpression: workflow.cronExpression,
     });
-    expect(dbMock.addActivity).toHaveBeenCalledWith(ENV.ownerOpenId, "workflow", "Created workflow: Daily review", "info");
+    expect(dbMock.addActivity).toHaveBeenCalledWith(
+      ENV.ownerOpenId,
+      "workflow",
+      "Created workflow: Daily review",
+      "info"
+    );
   });
 
   it("creates a Heartbeat job when enabling an unscheduled workflow", async () => {
     dbMock.getWorkflow.mockResolvedValue(workflow);
-    heartbeatMock.createHeartbeatJob.mockResolvedValue({ taskUid: "cron-workflow-44" });
+    heartbeatMock.createHeartbeatJob.mockResolvedValue({
+      taskUid: "cron-workflow-44",
+    });
     const caller = workflowsRouter.createCaller(ownerContext());
 
     await caller.setEnabled({ workflowId: workflow.id, enabled: true });
 
-    expect(heartbeatMock.createHeartbeatJob).toHaveBeenCalledWith(expect.objectContaining({
-      name: "workspace-workflow-44",
-      cron: "0 0 9 * * *",
-      path: "/api/scheduled/workflow",
-    }), "test-session");
-    expect(dbMock.updateWorkflow).toHaveBeenCalledWith(workflow.id, { enabled: true, scheduleCronTaskUid: "cron-workflow-44" });
+    expect(heartbeatMock.createHeartbeatJob).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: "workspace-workflow-44",
+        cron: "0 0 9 * * *",
+        path: "/api/scheduled/workflow",
+      }),
+      "test-session"
+    );
+    expect(dbMock.updateWorkflow).toHaveBeenCalledWith(workflow.id, {
+      enabled: true,
+      scheduleCronTaskUid: "cron-workflow-44",
+    });
   });
 
   it("removes the external job before deleting a scheduled workflow", async () => {
-    dbMock.getWorkflow.mockResolvedValue({ ...workflow, scheduleCronTaskUid: "cron-workflow-44", enabled: true });
+    dbMock.getWorkflow.mockResolvedValue({
+      ...workflow,
+      scheduleCronTaskUid: "cron-workflow-44",
+      enabled: true,
+    });
     const caller = workflowsRouter.createCaller(ownerContext());
 
     await caller.delete({ workflowId: workflow.id });
 
-    expect(heartbeatMock.deleteHeartbeatJob).toHaveBeenCalledWith("cron-workflow-44", "test-session");
+    expect(heartbeatMock.deleteHeartbeatJob).toHaveBeenCalledWith(
+      "cron-workflow-44",
+      "test-session"
+    );
     expect(dbMock.deleteWorkflow).toHaveBeenCalledWith(workflow.id);
   });
 });

@@ -4,13 +4,13 @@ Autonomous AI Workspace is a private, dark-themed AI dashboard for one Manus OAu
 
 ## Included modules
 
-| Module | Capability |
-| --- | --- |
-| AI Chat | Persisted conversations with server-proxied streamed Markdown responses. |
-| Image Studio | Prompt-to-image generation, durable object-storage copy, and private gallery. |
-| Code Assistant | Generate, explain, and debug modes with Markdown and syntax-highlighted source output. |
-| Workflows | Create, enable/disable, and delete scheduled AI workflow definitions using six-field UTC expressions. |
-| Activity Log | Timestamped status history for AI work and automation outcomes. |
+| Module         | Capability                                                                                            |
+| -------------- | ----------------------------------------------------------------------------------------------------- |
+| AI Chat        | Persisted conversations with server-proxied streamed Markdown responses.                              |
+| Image Studio   | Prompt-to-image generation, durable object-storage copy, and private gallery.                         |
+| Code Assistant | Generate, explain, and debug modes with Markdown and syntax-highlighted source output.                |
+| Workflows      | Create, enable/disable, and delete scheduled AI workflow definitions using six-field UTC expressions. |
+| Activity Log   | Timestamped status history for AI work and automation outcomes.                                       |
 
 ## Privacy and security
 

@@ -25,7 +25,9 @@ function contextFor(openId: string): TrpcContext {
 
 describe("private workspace controls", () => {
   it("rejects workspace data access from a signed-in non-owner", async () => {
-    const caller = appRouter.createCaller(contextFor("another-authenticated-user"));
+    const caller = appRouter.createCaller(
+      contextFor("another-authenticated-user")
+    );
     await expect(caller.workspace.summary()).rejects.toMatchObject({
       code: "FORBIDDEN",
       message: "This private workspace is available to its owner only.",
