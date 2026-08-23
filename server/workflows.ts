@@ -25,6 +25,8 @@ function textFromLLM(
 export async function executeWorkflow(workflowId: number) {
   const workflowRow = await db.getWorkflowById(workflowId);
   if (!workflowRow) throw new Error("Workflow not found");
+  if (!workflowRow.enabled) throw new Error("Workflow is disabled");
+
   const runId = await db.createWorkflowRun(workflowRow.id);
   await db.addActivity(
     workflowRow.ownerOpenId,
